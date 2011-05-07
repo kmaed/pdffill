@@ -1,0 +1,137 @@
+%% The pdffill package for LaTeX
+%% Copyright (c) 2011 Kazuki Maeda
+%%
+%% This work is distributed under the MIT License.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{pdffill}[2011/05/07 fill in PDF forms]
+
+\RequirePackage{tikz}
+
+\RequirePackage{expl3,xparse}
+
+\ExplSyntaxOn
+
+\RequirePackage{pdfpages}
+
+\keys_define:nn {pdffill} {
+  page .int_set:N = \l_pdffill_page_int,
+  draft .bool_set:N = \l_pdffill_draft_bool,
+  draft .default:n = true,
+  draftcolor .tl_set:N = \l_pdffill_draftcolor_tl,
+  grid .bool_set:N = \l_pdffill_grid_bool,
+  grid .default:n = true,
+  gridcolor .tl_set:N = \l_pdffill_gridcolor_tl,
+  xtics .dim_set:N = \l_pdffill_xtics_dim,
+  ytics .dim_set:N = \l_pdffill_ytics_dim,
+  tics .code:n = {
+    \dim_set:Nn \l_pdffill_xtics_dim {#1}
+    \dim_set:Nn \l_pdffill_ytics_dim {#1}
+  },
+  gridstep .int_set:N = \l_pdffill_gridstep_int,
+  xlabelstep .int_set:N = \l_pdffill_xlabelstep_int,
+  ylabelstep .int_set:N = \l_pdffill_ylabelstep_int,
+  labelstep .code:n = {
+    \int_set:Nn \l_pdffill_xlabelstep_int {#1}
+    \int_set:Nn \l_pdffill_ylabelstep_int {#1}
+  },
+}
+
+% prepare variables
+\tl_new:N  \g_pdffill_defaultoption_tl
+\dim_new:N \l_tmpx_dim
+\dim_new:N \l_tmpy_dim
+\dim_new:N \l_pdffill_xgridstep_dim
+\dim_new:N \l_pdffill_ygridstep_dim
+
+% default values
+\int_set:Nn \l_pdffill_page_int       \c_one
+\tl_set:Nn  \l_pdffill_draftcolor_tl  {red}
+\tl_set:Nn  \l_pdffill_gridcolor_tl   {blue!40}
+\dim_set:Nn \l_pdffill_xtics_dim      {2mm}
+\dim_set:Nn \l_pdffill_ytics_dim      {2mm}
+\int_set:Nn \l_pdffill_gridstep_int   \c_five
+\int_set:Nn \l_pdffill_xlabelstep_int \c_ten
+\int_set:Nn \l_pdffill_ylabelstep_int \c_ten
+
+\int_new:N \l_pdffill_xstepmax_int
+
+%%<*> \pdffilldefaultoption{<default options>}
+\ProvideDocumentCommand {\pdffilldefaultoption} { m } {
+  \tl_gset:Nn \g_pdffill_defaultoption_tl {#1}
+}
+
+\cs_generate_variant:Nn \keys_set:nn {nV}
+
+%%<*> \pfnode [<options>] (<x>, <y>) {<text>}
+%% TikZ command \node of pdffill version
+\ProvideDocumentCommand {\pfnode} { O{} u(u,u) +m } {
+  \bool_if:NTF \l_pdffill_draft_bool {
+    \node[#1,draw=\l_pdffill_draftcolor_tl] at (#3, #4) {#5};
+    \draw[draw=\l_pdffill_draftcolor_tl,fill=\l_pdffill_draftcolor_tl] 
+    (#3, #4) circle (0.25);
+  } {
+    \node[#1] at (#3, #4) {#5};
+  }
+}
+
+%%<*> \pdffill[options]{<PDF file name>}{<contents filled in>}
+\ProvideDocumentCommand {\pdffill} { O{} m +m } {
+  \keys_set:nV {pdffill} \g_pdffill_defaultoption_tl
+  \keys_set:nn {pdffill} {#1}
+
+  \tl_set:Nn \l_tmpa_tl {  
+    \put(0, 0){\noindent
+      \begin{tikzpicture}[x=\l_pdffill_xtics_dim,y=\l_pdffill_ytics_dim,
+        inner~sep=0pt,overlay]
+        #3
+
+        % draw grid
+        \bool_if:NT \l_pdffill_grid_bool {
+          \draw[color=\l_pdffill_gridcolor_tl,densely~dotted,step=1] 
+          (0, 0) grid (\paperwidth, \paperheight);
+          \draw[color=\l_pdffill_gridcolor_tl,densely~dotted,
+            step=\int_use:N \l_pdffill_gridstep_int,thick]
+          (0, 0) grid (\paperwidth, \paperheight);
+
+          \dim_set:Nn \l_pdffill_xgridstep_dim 
+              {\l_pdffill_xtics_dim * \l_pdffill_gridstep_int}
+          \dim_set:Nn \l_pdffill_ygridstep_dim 
+              {\l_pdffill_ytics_dim * \l_pdffill_gridstep_int}
+
+          % xlabel
+          \dim_set:Nn \l_tmpy_dim {\l_pdffill_ygridstep_dim / 2}
+          \bool_while_do:nn {\dim_compare_p:n {\l_tmpy_dim < \paperheight}} {
+            \dim_set:Nn \l_tmpx_dim \l_pdffill_xgridstep_dim
+            \int_set_eq:NN \l_tmpa_int \l_pdffill_gridstep_int
+            \bool_while_do:nn {\dim_compare_p:n {\l_tmpx_dim < \paperwidth}} {
+              \node[color=\l_pdffill_gridcolor_tl] at (\l_tmpx_dim, \l_tmpy_dim) 
+                   {\scriptsize \int_use:N \l_tmpa_int};
+              \dim_add:Nn \l_tmpx_dim {\l_pdffill_xgridstep_dim}
+              \int_add:Nn \l_tmpa_int {\l_pdffill_gridstep_int}
+            }
+            \dim_add:Nn \l_tmpy_dim {\l_pdffill_ygridstep_dim * \l_pdffill_xlabelstep_int}
+          }
+          
+          % ylabel
+          \dim_set:Nn \l_tmpx_dim {\l_pdffill_xgridstep_dim / 2}
+          \bool_while_do:nn {\dim_compare_p:n {\l_tmpx_dim < \paperwidth}} {
+            \dim_set:Nn \l_tmpy_dim \l_pdffill_ygridstep_dim
+            \int_set_eq:NN \l_tmpa_int \l_pdffill_gridstep_int
+            \bool_while_do:nn {\dim_compare_p:n {\l_tmpy_dim < \paperheight}} {
+              \node[color=\l_pdffill_gridcolor_tl] at (\l_tmpx_dim, \l_tmpy_dim) 
+                   {\scriptsize \int_use:N \l_tmpa_int};
+              \dim_add:Nn \l_tmpy_dim {\l_pdffill_ygridstep_dim}
+              \int_add:Nn \l_tmpa_int {\l_pdffill_gridstep_int}
+            }
+            \dim_add:Nn \l_tmpx_dim {\l_pdffill_xgridstep_dim * \l_pdffill_ylabelstep_int}
+          }
+        }
+      \end{tikzpicture}
+    }
+  }
+  \includepdf[pages=\int_use:N \l_pdffill_page_int,
+              picturecommand=\l_tmpa_tl,
+              fitpaper]
+             {#2}
+}
