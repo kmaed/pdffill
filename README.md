@@ -27,7 +27,7 @@ PDF を扱える e-TeX エンジンと，そのエンジンの LaTeX フォー�
 使い方
 ------
 
-pdffill.pdf を参照（これから作成予定）．
+[pdffill.pdf](https://github.com/kmaed/pdffill/blob/master/pdffill.pdf?raw=true) を参照．
 
 機能
 ----
