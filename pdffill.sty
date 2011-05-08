@@ -64,10 +64,9 @@
 %% \pdffill[options]{<PDF file name>}{<contents filled in>}
 %% Include a PDF file and fill in it.
 \ProvideDocumentCommand \pdffill { O{} m +m } {
-  \keys_set:nV {pdffill} \g_pf_defaultoption_tl
-  \keys_set:nn {pdffill} {#1}
-
   \tl_set:Nn \l_pf_picturecommand_tl {  
+    \keys_set:nV {pdffill} \g_pf_defaultoption_tl
+    \keys_set:nn {pdffill} {#1}
     \put(0, 0){\noindent
       \begin{tikzpicture}[inner~sep=0pt,overlay]
         #3

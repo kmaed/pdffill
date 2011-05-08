@@ -1,0 +1,61 @@
+%#! lualatex
+\documentclass[11pt]{bxjsarticle}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{luajalayout}
+
+\defaultfontfeatures{Ligatures=TeX}
+
+\setrftovf[scale=.95]{IPAexMincho:+jp90}{rmfamily}
+\setrftovf[overwrite,exclude=\jarange]{TeX Gyre Termes}{rmfamily}
+\setrftovf[scale=.95]{M+ 1c-medium}{rmfamily-B}
+\setrftovf[overwrite,exclude=\jarange]{TeX Gyre Termes/B}{rmfamily-B}
+\setmainfont[BoldFont=vf:rmfamily-B]{vf:rmfamily}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  \Large ほげほげ申請書
+\end{center}
+
+\begin{flushright}
+  平成\hspace{3em}年\hspace{3em}月\hspace{3em}日
+\end{flushright}
+
+\noindent ほげほげ協会　会長　殿
+
+\vspace{1em}
+
+下記の通りほげほげすることを申請します。
+
+\vspace{1em}
+
+\begin{center}
+  \begin{tikzpicture}[node distance=0pt]
+    \draw (0, 1.2em) -- ++ (20em, 0);
+    \node at (3em, .6em) {\footnotesize フリガナ};
+
+    \draw (0, 0) -- (20em, 0);
+    \node at (3em, -.8em) {申請者氏名};
+
+    \draw (0, -1.6em) -- ++ (20em, 0);
+    \node at (3em, -2.4em) {会員番号};
+    \foreach \x in {8,10,...,18} {
+      \draw (\x em, -1.6em) -- ++ (0em, -1.6em);
+    }
+
+    \draw (0, -3.2em) -- ++ (40em, 0);
+    \node[right] at (0, -4em) {ほげほげするに至った理由};
+
+    \draw (0em, 1.2em) -- (0em, -30em);
+    \draw (6em, 1.2em) -- (6em, -3.2em);
+    \draw (20em, 1.2em) -- (20em, -3.2em);
+    \draw (40em, -3.2em) -- (40em, -30em);
+    \draw (0em, -30em) -- (40em, -30em);
+  \end{tikzpicture}
+\end{center}
+
+\end{document}
