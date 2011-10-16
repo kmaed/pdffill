@@ -22,7 +22,7 @@ PDF を扱える e-TeX エンジンと，そのエンジンの LaTeX フォー�
  * 日本語を適切に扱うためのパッケージ（使い方はそれぞれのパッケージの説明を参照）
 
     * xelatex の場合: [zxjatype](http://zrbabbler.sp.land.to/zxjatype.html)
-    * lualatex の場合: とりあえず [luajalayout](http://www-is.amp.i.kyoto-u.ac.jp/lab/kmaeda/lualatex/luajalayout/)，そのうち [luatexja](http://sourceforge.jp/projects/luatex-ja/wiki/FrontPage)
+    * lualatex の場合: [luatexja](http://sourceforge.jp/projects/luatex-ja/wiki/FrontPage)
 
 使い方
 ------

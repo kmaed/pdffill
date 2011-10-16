@@ -1,108 +1,92 @@
-%% The pdffill package for LaTeX
-%% Copyright (c) 2011 Kazuki Maeda
 %%
-%% This work is distributed under the MIT License.
-
+%% This is file `pdffill.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% pdffill.dtx  (with options: `package')
+%% 
+%% The pdffill package for LaTeX
+%% Copyright (c) 2011 Kazuki Maeda <kmaeda@users.sourceforge.jp>
+%% 
+%% Distributable under the MIT License:
+%% http://www.opensource.org/licenses/mit-license.php
+%% 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{pdffill}[2011/05/08 fill in PDF]
-
+\ProvidesPackage{pdffill}
+  [2011/05/08 fill in PDF]
 \RequirePackage{tikz}
-
 \RequirePackage{expl3,xparse}
-
 \ExplSyntaxOn
-
 \RequirePackage{pdfpages}
-
 \keys_define:nn {pdffill} {
-  page .int_set:N = \l_pf_page_int,
-  draft .bool_set:N = \l_pf_draft_bool,
-  draft .default:n = true,
-  draftcolor .tl_set:N = \l_pf_draftcolor_tl,
-  grid .bool_set:N = \l_pf_grid_bool,
-  grid .default:n = true,
-  gridcolor .tl_set:N = \l_pf_gridcolor_tl,
-  tics .dim_set:N = \l_pf_tics_dim,
-  gridstep .int_set:N = \l_pf_gridstep_int,
-  labelstep .int_set:N = \l_pf_labelstep_int,
+  page       .int_set:N  = \l_pf_page_int,
+  draft      .bool_set:N = \l_pf_draft_bool,
+  draft      .default:n  = true,
+  draftcolor .tl_set:N   = \l_pf_draftcolor_tl,
+  grid       .bool_set:N = \l_pf_grid_bool,
+  grid       .default:n  = true,
+  gridcolor  .tl_set:N   = \l_pf_gridcolor_tl,
+  tics       .dim_set:N  = \l_pf_tics_dim,
+  gridstep   .int_set:N  = \l_pf_gridstep_int,
+  labelstep  .int_set:N  = \l_pf_labelstep_int,
 }
-
-%% Prepare variables
 \tl_new:N  \g_pf_defaultoption_tl
 \dim_new:N \l_pf_tmpx_dim
 \dim_new:N \l_pf_tmpy_dim
 \dim_new:N \l_pf_gridstep_dim
-
-%% Default values
 \int_set:Nn \l_pf_page_int      \c_one
 \tl_set:Nn  \l_pf_draftcolor_tl {red}
 \tl_set:Nn  \l_pf_gridcolor_tl  {blue!40}
 \dim_set:Nn \l_pf_tics_dim      {2mm}
 \int_set:Nn \l_pf_gridstep_int  \c_one
 \int_set:Nn \l_pf_labelstep_int \c_ten
-
-%% \pfdefaultoption{<default options>}
-%% Set default options of \pdffill
 \ProvideDocumentCommand \pfdefaultoption { m } {
   \tl_gset:Nn \g_pf_defaultoption_tl {#1}
 }
-
-%% \pfnode [<options>] (<x>, <y>) {<text>}
-%% pdffill version of the TikZ command \node
 \ProvideDocumentCommand \pfnode { O{} u(u,u) +m } {
   \bool_if:NTF \l_pf_draft_bool {
     \node[#1,draw=\l_pf_draftcolor_tl] at (#3, #4) {#5};
-    \draw[draw=\l_pf_draftcolor_tl,fill=\l_pf_draftcolor_tl] 
+    \draw[draw=\l_pf_draftcolor_tl,fill=\l_pf_draftcolor_tl]
     (#3, #4) circle (0.5mm);
   } {
     \node[#1] at (#3, #4) {#5};
   }
 }
-
-\cs_generate_variant:Nn \keys_set:nn {nV}
-
-%% \pdffill[options]{<PDF file name>}{<contents filled in>}
-%% Include a PDF file and fill in it.
+\cs_generate_variant:Nn \keys_set:nn {nx}
 \ProvideDocumentCommand \pdffill { O{} m +m } {
-  \tl_set:Nn \l_pf_picturecommand_tl {  
-    \keys_set:nV {pdffill} \g_pf_defaultoption_tl
-    \keys_set:nn {pdffill} {#1}
+  \group_begin:
+  \keys_set:nx {pdffill} {\g_pf_defaultoption_tl,#1}
+  \tl_set:Nn \l_pf_picturecommand_tl {
     \put(0, 0){\noindent
       \begin{tikzpicture}[inner~sep=0pt,overlay]
         #3
-
-        %% Draw grid
         \bool_if:NT \l_pf_grid_bool {
-          \dim_set:Nn \l_pf_gridstep_dim 
+          \dim_set:Nn \l_pf_gridstep_dim
               {1cm * \l_pf_gridstep_int}
-          \draw[color=\l_pf_gridcolor_tl,densely~dotted,step=\l_pf_tics_dim] 
+          \draw[color=\l_pf_gridcolor_tl,densely~dotted,step=\l_pf_tics_dim]
           (0, 0) grid (\paperwidth, \paperheight);
           \draw[color=\l_pf_gridcolor_tl,densely~dotted,
             step=\l_pf_gridstep_dim,thick]
           (0, 0) grid (\paperwidth, \paperheight);
-
-
-          %% xlabel
           \dim_set:Nn \l_pf_tmpy_dim {\l_pf_gridstep_dim / 2}
           \dim_while_do:nNnn \l_pf_tmpy_dim < \paperheight {
             \dim_set:Nn \l_pf_tmpx_dim \l_pf_gridstep_dim
             \int_set_eq:NN \l_tmpa_int \l_pf_gridstep_int
             \dim_while_do:nNnn \l_pf_tmpx_dim < \paperwidth {
-              \node[color=\l_pf_gridcolor_tl] at (\l_pf_tmpx_dim, \l_pf_tmpy_dim) 
+              \node[color=\l_pf_gridcolor_tl] at (\l_pf_tmpx_dim, \l_pf_tmpy_dim)
                    {\scriptsize \int_use:N \l_tmpa_int};
               \dim_add:Nn \l_pf_tmpx_dim \l_pf_gridstep_dim
               \int_add:Nn \l_tmpa_int \l_pf_gridstep_int
             }
             \dim_add:Nn \l_pf_tmpy_dim {\l_pf_gridstep_dim * \l_pf_labelstep_int}
           }
-          
-          %% ylabel
           \dim_set:Nn \l_pf_tmpx_dim {\l_pf_gridstep_dim / 2}
           \dim_while_do:nNnn \l_pf_tmpx_dim < \paperwidth {
             \dim_set:Nn \l_pf_tmpy_dim \l_pf_gridstep_dim
             \int_set_eq:NN \l_tmpa_int \l_pf_gridstep_int
             \dim_while_do:nNnn \l_pf_tmpy_dim < \paperheight {
-              \node[color=\l_pf_gridcolor_tl] at (\l_pf_tmpx_dim, \l_pf_tmpy_dim) 
+              \node[color=\l_pf_gridcolor_tl] at (\l_pf_tmpx_dim, \l_pf_tmpy_dim)
                    {\scriptsize \int_use:N \l_tmpa_int};
               \dim_add:Nn \l_pf_tmpy_dim \l_pf_gridstep_dim
               \int_add:Nn \l_tmpa_int \l_pf_gridstep_int
@@ -117,21 +101,21 @@
               picturecommand=\l_pf_picturecommand_tl,
               fitpaper]
              {#2}
+  \group_end:
 }
-
 \cs_generate_variant:Nn \tl_if_eq_p:NN {nn}
-
-%% \splitboxes[<position>]{<box_size>}{<tokens>}
-%% Split <tokens> into boxes of width <box_size>.
-\DeclareDocumentCommand \splitboxes { O{c} m m } {
+\ProvideDocumentCommand \splitboxes { O{c} m m } {
   \tl_map_inline:nn {#3} {\hbox_to_wd:nn {#2} {
       \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {r}} {
         \tex_hss:D
-      } 
-      ##1 
+      }
+      ##1
       \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {l}} {
         \tex_hss:D
       }
     }
   }
 }
+\endinput
+%%
+%% End of file `pdffill.sty'.
