@@ -48,4 +48,4 @@ ToDo
 意見・要望など
 -------------
 
-前田一貴 (kmaeda at users.sourceforge.jp) までお願いします．GitHub 経由でも構いません．
+前田一貴 (kmaeda at kmaeda.net) までお願いします．GitHub 経由でも構いません．
