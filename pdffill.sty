@@ -7,14 +7,14 @@
 %% pdffill.dtx  (with options: `package')
 %% _____________________________________________________________
 %% The pdffill package for LaTeX
-%% Copyright (c) 2011 Kazuki Maeda <kmaeda@kmaeda.net>
+%% Copyright (c) 2011-2019 Kazuki Maeda <kmaeda@kmaeda.net>
 %% 
 %% Distributable under the MIT License:
 %% http://www.opensource.org/licenses/mit-license.php
 %% 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{pdffill}
-  [2011/05/08 fill in PDF]
+  [2019/01/29 fill in PDF]
 \RequirePackage{tikz}
 \RequirePackage{expl3,xparse}
 \ExplSyntaxOn
@@ -103,14 +103,13 @@
              {#2}
   \group_end:
 }
-\cs_generate_variant:Nn \tl_if_eq_p:NN {nn}
 \ProvideDocumentCommand \splitboxes { O{c} m m } {
   \tl_map_inline:nn {#3} {\hbox_to_wd:nn {#2} {
-      \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {r}} {
+      \bool_if:nT {\str_if_eq_p:nn {#1} {c} || \str_if_eq_p:nn {#1} {r}} {
         \tex_hss:D
       }
       ##1
-      \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {l}} {
+      \bool_if:nT {\str_if_eq_p:nn {#1} {c} || \str_if_eq_p:nn {#1} {l}} {
         \tex_hss:D
       }
     }

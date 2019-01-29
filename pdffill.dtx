@@ -8,7 +8,7 @@
 \preamble
 _____________________________________________________________
 The pdffill package for LaTeX
-Copyright (c) 2011 Kazuki Maeda <kmaeda@kmaeda.net>
+Copyright (c) 2011-2019 Kazuki Maeda <kmaeda@kmaeda.net>
 
 Distributable under the MIT License:
 http://www.opensource.org/licenses/mit-license.php
@@ -24,7 +24,7 @@ http://www.opensource.org/licenses/mit-license.php
 \NeedsTeXFormat{LaTeX2e}
 %<package>\ProvidesPackage{pdffill}
 %<driver>\ProvidesFile{pdffill.dtx}
-%<driver|package>  [2011/05/08 fill in PDF]
+%<driver|package>  [2019/01/29 fill in PDF]
 %<*driver>
 \documentclass{ltjsarticle}
 \usepackage{doc}
@@ -80,10 +80,8 @@ http://www.opensource.org/licenses/mit-license.php
 % \section{依存パッケージ}
 %
 % |tikz|, |expl3|, |xparse|, |pdfpages|.
-% さらに，日本語を書くために，\LuaTeX ならば \LuaTeX-ja
-% \footnote{\url{http://sourceforge.jp/projects/luatex-ja/wiki/FrontPage}}，
-% \XeTeX ならば ZXjatype
-% \footnote{\url{http://zrbabbler.sp.land.to/zxjatype.html}}
+% さらに，日本語を書くために，\LuaTeX ならば \LuaTeX-ja\footnote{\url{http://sourceforge.jp/projects/luatex-ja/wiki/FrontPage}}，
+% \XeTeX ならば ZXjatype\footnote{\url{http://zrbabbler.sp.land.to/zxjatype.html}}
 % を用意して下さい．
 % なお，このドキュメントでは \LuaTeX-ja を用いています．
 %
@@ -367,14 +365,13 @@ http://www.opensource.org/licenses/mit-license.php
 % \begin{macro}{\splitboxes}
 % トークンを等間隔に配置するための簡単なコマンドです．
 %    \begin{macrocode}
-\cs_generate_variant:Nn \tl_if_eq_p:NN {nn}
 \ProvideDocumentCommand \splitboxes { O{c} m m } {
   \tl_map_inline:nn {#3} {\hbox_to_wd:nn {#2} {
-      \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {r}} {
+      \bool_if:nT {\str_if_eq_p:nn {#1} {c} || \str_if_eq_p:nn {#1} {r}} {
         \tex_hss:D
       }
       ##1
-      \bool_if:nT {\tl_if_eq_p:nn {#1} {c} || \tl_if_eq_p:nn {#1} {l}} {
+      \bool_if:nT {\str_if_eq_p:nn {#1} {c} || \str_if_eq_p:nn {#1} {l}} {
         \tex_hss:D
       }
     }
