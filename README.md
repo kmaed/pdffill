@@ -11,7 +11,7 @@ pdffill は使い慣れた LaTeX で美しく事務書類を作成するため�
 必要環境
 --------
 
-PDF を扱える e-TeX エンジンと，そのエンジンの LaTeX フォーマットの実行形式が必要です．すなわち pdflatex, xelatex, lualatex のいずれかが必要です．特に日本語を扱いたい場合は pdflatex ではほぼ無理なので，xelatex か lualatex のどちらかが必要となります．
+PDF を扱える e-TeX エンジンと，そのエンジンの LaTeX フォーマットの実行形式が必要です．すなわち pdflatex, xelatex, lualatex のいずれかが必要です．以前は (u)platex では使えませんでしたが，[2015年7月以降は pdfpages が dvipdfmx に対応したため](http://oku.edu.mie-u.ac.jp/tex/mod/forum/discuss.php?d=1630)，利用可能です．
 
 また，以下の LaTeX パッケージが必要です．
 
